@@ -13,6 +13,7 @@ jobs:
         with:
           repository: ${{ github.event.client_payload.repository }}
           ref: master
+          token: ${{ secrets.DOCS_PAT }}
 
       - name: Copy Markdown Files
         run: |
