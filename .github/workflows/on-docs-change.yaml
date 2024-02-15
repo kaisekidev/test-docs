@@ -1,0 +1,28 @@
+name: Pull Markdown Files
+
+on:
+  repository_dispatch:
+    types: [docs_changed]
+
+jobs:
+  pullMarkdown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.client_payload.repository }}
+          ref: master
+
+      - name: Copy Markdown Files
+        run: |
+          mkdir -p ./docs/${{ github.event.client_payload.repository }}
+          cp ./**/*.md ./docs/${{ github.event.client_payload.repository }}
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Update docs from ${{ github.event.client_payload.repository }}"
+          git push
