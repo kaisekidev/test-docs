@@ -22,7 +22,9 @@ jobs:
         run: |
           mkdir -p "./docs/${{ github.event.client_payload.name }}"
           cp "./temp/README.md" "./docs/${{ github.event.client_payload.name }}"
+          find ./temp/docs -name "*.md"
           find ./temp/docs -name "*.md" -exec cp {} "./docs/${{ github.event.client_payload.name }}" \;
+          git status
 
       - name: Remove Temp Directory
         run: rm -rf "./temp"
