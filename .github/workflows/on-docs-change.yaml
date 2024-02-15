@@ -8,8 +8,11 @@ jobs:
   pullMarkdown:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Checkout Package Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: ${{ github.event.client_payload.repository }}
           ref: master
@@ -23,9 +26,6 @@ jobs:
 
       - name: Remove Temp Directory
         run: rm -rf "./temp"
-
-      - name: Checkout Target Repository
-        uses: actions/checkout@v2
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
