@@ -1,0 +1,20 @@
+name: Dispatch Docs Change
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'README.md'
+      - 'docs/**/*.md'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.DOCS_PAT }}
+          repository: ['kaisekidev/test-docs']
+          event-type: docs_changed
+          client-payload: '{"repository": "${{ github.repository }}"}'
