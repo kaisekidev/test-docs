@@ -13,17 +13,44 @@ jobs:
         with:
           repository: ${{ github.event.client_payload.repository }}
           ref: master
+          path: './temp'
 
-      - name: Copy Markdown Files
-        run: |
-          mkdir -p ./docs/${{ github.event.client_payload.repository }}
-          cp ./**/*.md ./docs/${{ github.event.client_payload.repository }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
 
-      - name: Commit and Push
+      - name: Copy Files
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "Update docs from ${{ github.event.client_payload.repository }}"
-          git remote set-url origin https://x-access-token:${{ secrets.DOCS_PAT }}@github.com/${{ github.repository }}
-          git push
+          const fs = require('fs');
+          const path = require('path');
+          const glob = require('glob');
+          const targetPath = `./docs/${{ github.event.client_payload.name }}`;
+          if (!fs.existsSync(targetPath)) {
+            fs.mkdirSync(targetPath, { recursive: true });
+          }
+          fs.copyFileSync('./temp/README.md', path.join(targetPath, 'README.md'));
+          const docFiles = glob.sync('./temp/docs/**/*.md');
+          docFiles.forEach((file) => {
+            const targetFile = file.replace('./temp/', targetPath + '/');
+            fs.copyFileSync(file, targetFile);
+          });
+
+      - name: Remove Temp Directory
+        run: |
+          const fs = require('fs');
+          const path = require('path');
+          const directory = './temp';
+          fs.rmdirSync(directory, { recursive: true });
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.DOCS_PAT }}
+          commit-message: "Merge new docs from ${{ github.event.client_payload.repository }}"
+          branch: "${{ github.event.client_payload.repository }}-${{ github.run_id }}"
+          delete-branch: true
+          title: "Update docs from ${{ github.event.client_payload.repository }}"
+          body: "This PR merges documentation updates from ${{ github.event.client_payload.repository }}"
+          labels: "documentation, automated pr"
+          draft: false
