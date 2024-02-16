@@ -22,8 +22,8 @@ jobs:
         run: |
           name=${{ github.event.client_payload.name }}
           name=${name#kaiseki-}
-          mkdir -p "./src/app/docs/${{ github.event.client_payload.name }}"
-          cp "./temp/README.md" "./src/app/docs/${{ github.event.client_payload.name }}/page.md"
+          mkdir -p "./src/app/docs/${name}"
+          cp "./temp/README.md" "./src/app/docs/${name}/page.md"
 
       - name: Remove Temp Directory
         run: rm -rf "./temp"
