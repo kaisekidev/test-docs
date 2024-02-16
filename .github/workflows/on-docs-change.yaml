@@ -29,11 +29,11 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.DOCS_PAT }}
+          # token: ${{ secrets.DOCS_PAT }}
           commit-message: "Merge new docs from ${{ github.event.client_payload.repository }}"
           branch: "${{ github.event.client_payload.repository }}-${{ github.run_id }}"
-          delete-branch: true
+          # delete-branch: true
           title: "Update docs from ${{ github.event.client_payload.repository }}"
           body: "This PR merges documentation updates from ${{ github.event.client_payload.repository }}"
           labels: "documentation, automated pr"
-          draft: false
+          # draft: false
