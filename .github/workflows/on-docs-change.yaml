@@ -20,6 +20,8 @@ jobs:
 
       - name: Copy Files
         run: |
+          name=${{ github.event.client_payload.name }}
+          name=${name#kaiseki-}
           mkdir -p "./src/app/docs/${{ github.event.client_payload.name }}"
           cp "./temp/README.md" "./src/app/docs/${{ github.event.client_payload.name }}/page.md"
 
